@@ -80,8 +80,6 @@ async def input_filter(PayerId:int, ICD:str):
                         "Transaction_ID": "1234",
                         "Received_TS" : "",
                         "Processed_TS" : "",
-                        "PayerId": PayerId,
-                        "ICD": ICD
                     },
         }
     # 1. Get the line items
