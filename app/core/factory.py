@@ -23,9 +23,9 @@ def create_app():
     app = FastAPI(
         title=cfg.APPLICATION,
         openapi_url=f"{cfg.API_PATH}/openapi.json",
-        docs_url="/docs/",
+        docs_url=f"{cfg.API_PATH}/docs",
         description=cfg.DESCRIPTION,
-        redoc_url="/redoc/",
+        redoc_url=f"{cfg.API_PATH}/redoc",
         version= cfg.VERSION,
         terms_of_service="https://www.ihx.in/terms.html",
         contact={
