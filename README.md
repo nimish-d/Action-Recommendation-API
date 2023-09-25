@@ -1,10 +1,10 @@
-Action Recommendation API (ACTIONS) RestAPI
+Action-Recommendation-API
 =========================================
-This API provides action recommendations to avoid IRs during claim transaactions
+This API provides action recommendations to avoid IRs during claim transactions
 
 Solution Flow Diagram
 ---------------------
-![ACTIONS Model Diagram](imgs/dummy-flow.jpg)
+![Flow Diagram](imgs/Action-Recommendation-API.drawio.png)
 
 Implementation
 --------------
@@ -46,4 +46,3 @@ Code changes made will be auto loaded for action.
     - [ ] Sub-Feature-2
 - [x] Feature-1
 - [ ] Feature-2
-# Action-Recommendation-API
