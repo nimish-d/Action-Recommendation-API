@@ -19,6 +19,7 @@ from app.core import logger
 from app.utils import utilities as U 
 from app.utils import constants as C 
 from app.schema.Action_Recommendation_API import ClassiferResponse
+from app.controllers.read_table import DatabaseConnector
 
 router = APIRouter(prefix="/recommendation")
 #logger = logger.log_setup(cfg, "app")

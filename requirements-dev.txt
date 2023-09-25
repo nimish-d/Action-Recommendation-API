@@ -6,3 +6,6 @@ prospector[with_everything]
 locust==2.10.1
 bandit
 commitizen
+SQLAlchemy==2.0.21
+psycopg2-binary==2.9.7
+pyodbc==4.0.39
