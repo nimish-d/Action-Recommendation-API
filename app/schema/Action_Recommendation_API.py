@@ -125,4 +125,43 @@ class ClassiferResponse(BaseModel):
                 ]
             }
         }
-    
+
+class ActionRecommendation(BaseModel):
+   TopActionList: List[int]
+   Text: str
+# include probabilities, action strings
+
+
+class ActionRecommendationResponse(BaseModel):
+    Transaction_Info: TransactionInfo
+    Request_Info: RequestInfo
+    Action_Recommendation: ActionRecommendation
+    # Validation and json convertor for pydantic
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+        
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        schema_extra = {
+            "example": {
+                "Transaction_Info": {
+                        "Transaction_ID": "1234",
+                        "Received_TS" : "",
+                        "Processed_TS" : ""
+                    },
+                "Request_Info": {
+                        "Claim_ID": "1234",
+                        "Client_ID": "1234",
+                        "Total_Lines": 1,
+                    },
+                "Action_Recommendation":{"TopActionList": [99,5,0], "Text": "Avoid making spelling mistakes!"}
+            }
+        }

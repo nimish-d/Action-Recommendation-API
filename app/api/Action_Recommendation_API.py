@@ -18,7 +18,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from app.core import logger
 from app.utils import utilities as U 
 from app.utils import constants as C 
-from app.schema.Action_Recommendation_API import ClassiferResponse
+from app.schema.Action_Recommendation_API import ClassiferResponse, ActionRecommendationResponse
 from app.controllers.read_table import DatabaseConnector
 
 router = APIRouter(prefix="/recommendation")
@@ -73,7 +73,42 @@ async def Classifer(file: UploadFile):
     return _response
 
 
-@router.post("/", response_model=ClassiferResponse)
+
+
+# Nimish's code starts here. Remove this comment later
+postgre_connection_settings = {
+    "driver": "postgresql+psycopg2",
+    "dbname": "IR_temp",
+    "user": "postgres",
+    "password": "ihx@123",
+    "host": "20.204.32.147",
+    "port": "5432"
+    }
+postgre_tablename = "action_recommendation"
+# postgre_query = text(f"SELECT * FROM {postgre_tablename} limit 3")
+postgre_query = f"""SELECT * FROM {postgre_tablename} WHERE ("ICD"='S02' AND "PayerId"='516572')"""
+
+# Define your database connection parameters here as a dictionary
+driver = "sqlalchemy"
+connection_settings = postgre_connection_settings
+tablename = postgre_tablename
+db_connector = DatabaseConnector(driver, connection_settings)
+logger.info(f'[Connected to the DB][{postgre_connection_settings}]')
+db_connector.connect()
+query = postgre_query
+print(query)
+logger.info(f'[Test Query:][{query}]')
+
+result = db_connector.execute_query(query)
+logger.info(f'[Result of the Query]:[{result}]')
+
+for row in result[0:1]:
+    print(row)
+
+# include the following command in the shutdown method
+# db_connector.close()
+
+@router.post("/", response_model=ActionRecommendationResponse)
 async def input_filter(PayerId:int, ICD:str):
     """API route to get action recommendation stored in a database given a set of filter values"""
     _response = {
@@ -96,6 +131,13 @@ async def input_filter(PayerId:int, ICD:str):
             f"{U.prepend_msg(trxId)} - Begin Processing Request -> {start_time}"
         )
         end_time = time.time()
+        query = f"""SELECT * FROM {postgre_tablename} WHERE ("ICD"='{ICD}' AND "PayerId"='{PayerId}')"""
+        logger.info(query)
+        result = db_connector.execute_query(query)[0]
+
+        _response['Action_Recommendation'] = {}
+        _response['Action_Recommendation']['TopActionList'] = [int(i) for i in list(result['Actions'])][0:3]
+        _response['Action_Recommendation']['Text'] = 'Text'
         logger.info(
             f"{U.prepend_msg(trxId)} - End Processing Request -> {end_time} - Time Taken -> {end_time - start_time}"
         )

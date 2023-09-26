@@ -73,4 +73,5 @@ class DatabaseConnector:
         return result
 
     def _execute_query_sqlalchemy(self, query):
-        return self.connection.execute(text(query)).fetchall()
+        # returning a list of dictionaries instead of a list of tuples
+        return [row._asdict() for row in self.connection.execute(text(query)).fetchall()]
