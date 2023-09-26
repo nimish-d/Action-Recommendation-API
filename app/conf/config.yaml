@@ -31,6 +31,7 @@ Filters:
   classifier: ["NAME-OF-LABEL"] 
 # Add any global configuration values here
 SQLToolKit: "sqlalchemy"
+Number_of_Actions_Recommended: 10
 # Environment specific values go in the env directory
 Mode: development
 defaults:

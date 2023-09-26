@@ -136,11 +136,12 @@ async def input_filter(PayerId:int, ICD:str):
         filters = {}
         filters['ICD'] = ICD
         filters['PayerId'] = PayerId
-        result = get_filtered_record(db_connector, tablename, filters)
+        _response['Action_Recommendation'] = get_filtered_record(db_connector, tablename, filters)
 
-        _response['Action_Recommendation'] = {}
-        _response['Action_Recommendation']['TopActionList'] = [int(i) for i in list(result['Actions'])][0:3]
-        _response['Action_Recommendation']['Text'] = 'Text'
+        # delete
+        # _response['Action_Recommendation'] = {}
+        # _response['Action_Recommendation']['TopActionList'] = [int(i) for i in list(result['Actions'])][0:3]
+        # _response['Action_Recommendation']['Text'] = 'Text'
         logger.info(
             f"{U.prepend_msg(trxId)} - End Processing Request -> {end_time} - Time Taken -> {end_time - start_time}"
         )
