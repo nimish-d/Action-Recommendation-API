@@ -31,7 +31,10 @@ Filters:
   classifier: ["NAME-OF-LABEL"] 
 # Add any global configuration values here
 SQLToolKit: "sqlalchemy"
-Number_of_Actions_Recommended: 10
+Number_of_Actions_Recommended: 3
+List_of_Filters:
+  - PayerId
+  - ICD
 # Environment specific values go in the env directory
 Mode: development
 defaults:
