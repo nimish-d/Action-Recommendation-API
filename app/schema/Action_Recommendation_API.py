@@ -128,7 +128,7 @@ class ClassiferResponse(BaseModel):
 
 class ActionRecommendation(BaseModel):
    TopActionList: List[int]
-   Text: str
+   Text: List[str]
 # include probabilities, action strings
 
 

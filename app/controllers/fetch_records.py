@@ -9,5 +9,5 @@ def get_filtered_record(db_connector, tablename, filters) -> ActionRecommendatio
         record = db_connector.execute_query(query)[0]
         result = {}
         result['TopActionList'] = [int(i) for i in list(record['Actions'])][0:cfg['Number_of_Actions_Recommended']]
-        result['Text'] = "Text"
+        result['Text'] = [cfg['models']['Actions']['List_of_Actions'][i] for i in result['TopActionList']]
         return ActionRecommendation(**result)
