@@ -30,7 +30,7 @@ Filters:
   # In a 2 stage process classify + extract only the filtered element goes for extraction
   classifier: ["NAME-OF-LABEL"] 
 # Add any global configuration values here
-#
+SQLToolKit: "sqlalchemy"
 # Environment specific values go in the env directory
 Mode: development
 defaults:

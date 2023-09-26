@@ -14,3 +14,11 @@ S3:
     key: ""
 paths:
   data: "app/controllers/references/files"
+sqlalchemy:
+  driver: "postgresql+psycopg2"
+  dbname: "IR_temp"
+  user: "postgres"
+  password: "ihx@123"
+  host: "20.204.32.147"
+  port: "5432"
+tablename: "action_recommendation"

@@ -18,8 +18,10 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from app.core import logger
 from app.utils import utilities as U 
 from app.utils import constants as C 
+from app.core import cfg
 from app.schema.Action_Recommendation_API import ClassiferResponse, ActionRecommendationResponse
 from app.controllers.read_table import DatabaseConnector
+
 
 router = APIRouter(prefix="/recommendation")
 #logger = logger.log_setup(cfg, "app")
@@ -73,34 +75,25 @@ async def Classifer(file: UploadFile):
     return _response
 
 
-
-
 # Nimish's code starts here. Remove this comment later
-postgre_connection_settings = {
-    "driver": "postgresql+psycopg2",
-    "dbname": "IR_temp",
-    "user": "postgres",
-    "password": "ihx@123",
-    "host": "20.204.32.147",
-    "port": "5432"
-    }
-postgre_tablename = "action_recommendation"
-# postgre_query = text(f"SELECT * FROM {postgre_tablename} limit 3")
-postgre_query = f"""SELECT * FROM {postgre_tablename} WHERE ("ICD"='S02' AND "PayerId"='516572')"""
+# remove printing configuration 
+logger.info(f'[configuration]: [{cfg}]')
+
+connection_settings = cfg['store']['sqlalchemy']
+
+tablename = cfg['store']['tablename']
+# query = text(f"SELECT * FROM {tablename} limit 3")
+query = f"""SELECT * FROM {tablename} WHERE ("ICD"='S02' AND "PayerId"='516572')"""
 
 # Define your database connection parameters here as a dictionary
-driver = "sqlalchemy"
-connection_settings = postgre_connection_settings
-tablename = postgre_tablename
+driver = cfg['SQLToolKit']
 db_connector = DatabaseConnector(driver, connection_settings)
-logger.info(f'[Connected to the DB][{postgre_connection_settings}]')
+logger.info(f'[Connected to the DB][{connection_settings}]')
 db_connector.connect()
-query = postgre_query
-print(query)
 logger.info(f'[Test Query:][{query}]')
 
 result = db_connector.execute_query(query)
-logger.info(f'[Result of the Query]:[{result}]')
+logger.info(f'[Result of the Test Query]:[{result}]')
 
 for row in result[0:1]:
     print(row)
@@ -131,7 +124,7 @@ async def input_filter(PayerId:int, ICD:str):
             f"{U.prepend_msg(trxId)} - Begin Processing Request -> {start_time}"
         )
         end_time = time.time()
-        query = f"""SELECT * FROM {postgre_tablename} WHERE ("ICD"='{ICD}' AND "PayerId"='{PayerId}')"""
+        query = f"""SELECT * FROM {tablename} WHERE ("ICD"='{ICD}' AND "PayerId"='{PayerId}')"""
         logger.info(query)
         result = db_connector.execute_query(query)[0]
 
@@ -147,7 +140,7 @@ async def input_filter(PayerId:int, ICD:str):
         _response['Transaction_Info']['Processed_TS'] = end_dt
     except Exception as e:
         logger.error(
-            f"{U.prepend_msg(trxId)} - there's an error uploading file. Please try again!!!",
+            f"{U.prepend_msg(trxId)} - There's an Error in Fetching Action Recommendations. Please Try Again!",
             exc_info=True,
         )
         error_message = {
@@ -155,7 +148,7 @@ async def input_filter(PayerId:int, ICD:str):
             "Error": "Error while Uploading file. TRY AGAIN!!",
             "Error-Message": str(e),
         }
-        raise HTTPException(status_code=418, detail= f"Error - there's an error uploading file. Please try again!!!")
+        raise HTTPException(status_code=418, detail= f"Error - Unable to Fetch Action Recommendations. Please Try Again!")
     logger.info(
             f"{U.prepend_msg(trxId)} - Response Request -> {_response}"
         )
