@@ -21,6 +21,7 @@ from app.utils import constants as C
 from app.core import cfg
 from app.schema.Action_Recommendation_API import ClassiferResponse, ActionRecommendationResponse
 from app.controllers.read_table import DatabaseConnector
+from app.controllers.fetch_records import get_filtered_record
 
 
 router = APIRouter(prefix="/recommendation")
@@ -74,29 +75,34 @@ async def Classifer(file: UploadFile):
         )
     return _response
 
-
+# remove
 # Nimish's code starts here. Remove this comment later
-# remove printing configuration 
-logger.info(f'[configuration]: [{cfg}]')
 
+# remove
+# logger.info(f'[configuration]: [{cfg}]')
+
+# Establish a connection to the db defined by configuration files
+# in conf and conf/store files
 connection_settings = cfg['store']['sqlalchemy']
-
 tablename = cfg['store']['tablename']
-# query = text(f"SELECT * FROM {tablename} limit 3")
-query = f"""SELECT * FROM {tablename} WHERE ("ICD"='S02' AND "PayerId"='516572')"""
+
+# if the connection fails, this API must be disabled
 
 # Define your database connection parameters here as a dictionary
 driver = cfg['SQLToolKit']
 db_connector = DatabaseConnector(driver, connection_settings)
-logger.info(f'[Connected to the DB][{connection_settings}]')
 db_connector.connect()
-logger.info(f'[Test Query:][{query}]')
+logger.info(f'[Connected to the DB][{connection_settings}]')
 
+# remove ----
+# query = text(f"SELECT * FROM {tablename} limit 3")
+query = f"""SELECT * FROM {tablename} WHERE ("ICD"='S02' AND "PayerId"='516572')"""
+logger.info(f'[Test Query:][{query}]')
 result = db_connector.execute_query(query)
 logger.info(f'[Result of the Test Query]:[{result}]')
-
 for row in result[0:1]:
     print(row)
+# remove ----
 
 # include the following command in the shutdown method
 # db_connector.close()
@@ -124,9 +130,13 @@ async def input_filter(PayerId:int, ICD:str):
             f"{U.prepend_msg(trxId)} - Begin Processing Request -> {start_time}"
         )
         end_time = time.time()
-        query = f"""SELECT * FROM {tablename} WHERE ("ICD"='{ICD}' AND "PayerId"='{PayerId}')"""
-        logger.info(query)
-        result = db_connector.execute_query(query)[0]
+        # query = f"""SELECT * FROM {tablename} WHERE ("ICD"='{ICD}' AND "PayerId"='{PayerId}')"""
+        # logger.info(query)
+        # result = db_connector.execute_query(query)[0]
+        filters = {}
+        filters['ICD'] = ICD
+        filters['PayerId'] = PayerId
+        result = get_filtered_record(db_connector, tablename, filters)
 
         _response['Action_Recommendation'] = {}
         _response['Action_Recommendation']['TopActionList'] = [int(i) for i in list(result['Actions'])][0:3]
