@@ -83,7 +83,8 @@ async def Classifer(file: UploadFile):
 
 # Establish a connection to the db defined by configuration files
 # in conf and conf/store files
-connection_settings = cfg['store']['sqlalchemy']
+SQLToolKit = cfg['SQLToolKit']
+connection_settings = cfg['store'][SQLToolKit]
 tablename = cfg['store']['tablename']
 
 # if the connection fails, this API must be disabled
