@@ -17,9 +17,9 @@ from fastapi import APIRouter, HTTPException, UploadFile
 
 from app.core import logger
 from app.utils import utilities as U 
-from app.utils import constants as C 
+from app.utils import constants as C
 from app.core import cfg
-from app.schema.Action_Recommendation_API import ClassiferResponse, ActionRecommendationResponse
+from app.schema.Action_Recommendation_API import ClassiferResponse, ActionRecommendationResponse, RecommendationRequest
 from app.controllers.read_table import DatabaseConnector
 from app.controllers.fetch_records import get_filtered_record
 
@@ -109,7 +109,8 @@ for row in result[0:1]:
 # db_connector.close()
 
 @router.post("/", response_model=ActionRecommendationResponse)
-async def input_filter(PayerId:int, ICD:str):
+# async def input_filter(PayerId:int, ICD:str):
+async def input_filter(action_request: RecommendationRequest):
     """API route to get action recommendation stored in a database given a set of filter values"""
     _response = {
         "Transaction_Info": {
@@ -135,8 +136,8 @@ async def input_filter(PayerId:int, ICD:str):
         # logger.info(query)
         # result = db_connector.execute_query(query)[0]
         filters = {}
-        filters['ICD'] = ICD
-        filters['PayerId'] = PayerId
+        filters['ICD'] = action_request['ICD']
+        filters['PayerId'] = action_request['PayerId']
         _response['Action_Recommendation'] = get_filtered_record(db_connector, tablename, filters)
 
         # delete

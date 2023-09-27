@@ -126,6 +126,31 @@ class ClassiferResponse(BaseModel):
             }
         }
 
+class RecommendationRequest(BaseModel):
+    ICD: str
+    PayerId: str
+    
+    # Validation and json convertor for pydantic
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+        
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        schema_extra = {
+            "example": {
+                "PayerId": "516572",
+                "ICD": "ALL",
+            }
+        }
+
 class ActionRecommendation(BaseModel):
    TopActionList: List[int]
    Text: List[str]
